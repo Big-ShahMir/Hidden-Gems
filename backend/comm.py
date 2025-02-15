@@ -9,7 +9,7 @@ from data_collection.aggregator import aggregate_data
 
 # AI STUFF
 ai_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
-token = "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"
+token = "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"
 
 def llm(query): 
     parameters = {
