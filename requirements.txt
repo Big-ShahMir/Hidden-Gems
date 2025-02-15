@@ -7,3 +7,4 @@ requests
 urllib
 selenium
 trafilatura
+huggingface_hub

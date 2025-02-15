@@ -3,8 +3,44 @@ from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-# from data_collection.aggregator import aggregate_data
+import huggingface_hub
+import requests
+from data_collection.aggregator import aggregate_data
 
+# AI STUFF
+ai_url = "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct"
+token = "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"
+
+def llm(query): 
+    parameters = {
+      "max_new_tokens": 1000,
+      "temperature": 0.09,
+      "top_k": 50,
+      "top_p": 0.95,
+      "return_full_text": False
+    }
+
+    prompt = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are a travel guide. You are provided with a diverse range of information of activities to do in a given location. Your job is to condense this information and pick events/activities for 
+     a person to do based on their interests, which is also provided <|eot_id|><|start_header_id|>user<|end_header_id|> Here is the information of possible activites: ```{query}```.
+      Provide precise and concise recommendations try to get between 5-10 recommendations and format your response in JSON format, having keys for activity name, description and the approximate price.<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+  
+    headers = {
+      'Authorization': f'Bearer {token}',
+      'Content-Type': 'application/json'
+  }
+    
+    payload = {
+      "inputs": prompt,
+      "parameters": parameters
+  }
+  
+    response = requests.post(ai_url, headers=headers, json=payload)
+    response_text = response.json()[0]['generated_text'].strip()
+
+    return response_text
+
+
+# API STUFF
 app = FastAPI(title="Custom JSON Processor API")
 
 #Allowed addresses
@@ -44,7 +80,7 @@ async def process_data(input_data: ProcessingInput):
         processed_data = custom_process_data(input_data.interest, input_data.budget, input_data.loc)
         
         return ProcessedResult(
-            desc = processed_data
+            descs = processed_data
         )
 
     except Exception as e:
@@ -52,9 +88,9 @@ async def process_data(input_data: ProcessingInput):
 
 
 def custom_process_data(intrst: str, budg: float, loc: str ) :
-    # data = aggregate_data(loc)
-    processed_result = []
-       
+    data = aggregate_data(loc, budg, intrst)
+    print(llm(data))
+    process_data = []
     return processed_result
 
 
