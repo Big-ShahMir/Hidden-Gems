@@ -8,7 +8,7 @@ import requests
 from data_collection.aggregator import aggregate_data
 
 # AI STUFF
-ai_url = "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct"
+ai_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
 token = "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"
 
 def llm(query): 
