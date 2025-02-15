@@ -2,3 +2,7 @@ requests==2.31.0      # For making API requests to Google Places, Reddit, and tr
 beautifulsoup4==4.12.2 # For scraping travel blogs
 praw==7.7.0           # For fetching posts from Reddit
 unittest2==1.1.0      # For testing (alternative to built-in unittest with more features)
+bs4 
+requests
+urllib.parse
+duckduckgo_search
