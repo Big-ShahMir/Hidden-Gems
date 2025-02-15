@@ -89,9 +89,11 @@ async def process_data(input_data: ProcessingInput):
 
 def custom_process_data(intrst: str, budg: float, loc: str ) :
     data = aggregate_data(loc, budg, intrst)
+    print("works 2")
     print(llm(data))
+    print("works 3")
     process_data = []
-    return processed_result
+    return process_data
 
 
 if __name__ == "__main__":

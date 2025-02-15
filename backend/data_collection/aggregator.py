@@ -1,6 +1,6 @@
-from forum import get_reddit_posts
-from blog import scrape_travel_blog
-from url import get_relevant_travel_blog_urls
+from .forum import get_reddit_posts
+from .blog import scrape_travel_blog
+from .url import get_relevant_travel_blog_urls
 
 def aggregate_data(location, budget, interest: str):
     """

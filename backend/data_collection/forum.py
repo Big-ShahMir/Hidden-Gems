@@ -1,5 +1,5 @@
 import requests
-from config import USER_AGENT
+from .config import USER_AGENT
 
 def get_reddit_posts(query, limit=5):
     """
