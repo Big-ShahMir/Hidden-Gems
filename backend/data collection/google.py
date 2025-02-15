@@ -1,5 +1,3 @@
-# aggregator/google_places.py
-
 import requests
 from config import GOOGLE_API_KEY
 

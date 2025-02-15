@@ -1,5 +1,3 @@
-# aggregator/reddit_scraper.py
-
 import requests
 from config import USER_AGENT
 
