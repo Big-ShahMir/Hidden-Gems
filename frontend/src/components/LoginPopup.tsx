@@ -18,7 +18,7 @@ export default function LoginPopup({ onSuccess, onClose }: LoginPopupProps) {
     e.preventDefault()
     try {
       // Mock API call
-      await axios.post("/api/login", { username, password })
+      await axios.post("/api/login", { "username":username, "password":password })
       onSuccess(username, password)
     } catch (error) {
       console.error("Login failed:", error)
