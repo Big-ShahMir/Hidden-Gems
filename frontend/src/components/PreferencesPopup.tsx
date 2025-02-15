@@ -6,6 +6,8 @@ import axios from "axios";
 import { UserData } from "@/app/page";
 
 
+const fastApiURL = "http://127.0.0.1:8000"
+
 interface PreferencesPopupProps {
   onSubmit: (interests: string, budget: number, location: string) => void
   onClose: () => void
@@ -36,9 +38,22 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
       } else {
         console.error('Failed to save preference')
       }
+
+      const descriptions = await axios.post(`${fastApiURL}/process`, {
+        interest: interests,
+        budget,
+        loc: location,
+      })
+
+    console.log(descriptions.data)
+
+
     } catch (error) {
       console.error('Error saving preference:', error)
     }
+
+
+
   }
 
   return (
