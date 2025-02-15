@@ -30,14 +30,14 @@ def get_relevant_travel_blog_urls(query, max_results=10):
     
     return filtered_urls
 
-if __name__ == '__main__':
-    # Example query: Adjust it based on your needs (e.g., location, keywords)
-    query = "hidden gems travel blog New York"
-    urls = get_relevant_travel_blog_urls(query)
+# if __name__ == '__main__':
+#     # Example query: Adjust it based on your needs (e.g., location, keywords)
+#     query = "hidden gems travel blog New York"
+#     urls = get_relevant_travel_blog_urls(query)
     
-    if urls:
-        print("Relevant Travel Blog URLs:")
-        for url in urls:
-            print(url)
-    else:
-        print("No relevant URLs found.")
+#     if urls:
+#         print("Relevant Travel Blog URLs:")
+#         for url in urls:
+#             print(url)
+#     else:
+#         print("No relevant URLs found.")

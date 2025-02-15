@@ -1,6 +1,7 @@
 #from google import get_places
 from forum import get_reddit_posts
 from blog import scrape_travel_blog
+from url import get_relevant_travel_blog_urls
 
 def aggregate_data(location):
     """
@@ -21,11 +22,19 @@ def aggregate_data(location):
     # Step 3: (Optional) For each place, attempt to scrape related travel blogs.
     # For demonstration, we’ll use a placeholder blog URL.
     blogs = []
-    placeholder_blog_url = "https://travelwithruba.com/?utm_source=chatgpt.com" 
-    blog_content = scrape_travel_blog(placeholder_blog_url)
-    if blog_content:
-        blogs.append(blog_content)
+    # placeholder_blog_url = "https://travelwithruba.com/?utm_source=chatgpt.com" 
+    # blog_content = scrape_travel_blog(placeholder_blog_url)
+    urls = get_relevant_travel_blog_urls(location)
     
+    # blog_content = scrape_travel_blog(urls[0])
+    # if blog_content:
+    #     blogs.append(blog_content)
+    
+    for url in urls:
+        blog_content = scrape_travel_blog(url)
+        if blog_content:
+            blogs.append(blog_content)
+
     # Aggregate all data into a single dictionary
     aggregated = {
         # 'places': places,

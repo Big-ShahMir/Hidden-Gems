@@ -4,5 +4,5 @@ praw==7.7.0           # For fetching posts from Reddit
 unittest2==1.1.0      # For testing (alternative to built-in unittest with more features)
 bs4 
 requests
-urllib.parse
+urllib
 duckduckgo_search
