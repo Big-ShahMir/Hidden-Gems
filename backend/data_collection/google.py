@@ -1,5 +1,5 @@
 import requests
-from config import GOOGLE_API_KEY
+from backend.data_collection.config import GOOGLE_API_KEY
 
 def get_places(location, radius=5000, place_type='restaurant'):
     """
