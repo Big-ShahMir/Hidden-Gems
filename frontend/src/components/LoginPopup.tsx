@@ -1,30 +1,38 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import axios from "axios"
+import type React from "react";
+import { useState } from "react";
+import axios from "axios";
 
 interface LoginPopupProps {
-  onSuccess: (username: string, password: string) => void
-  onClose: () => void
+  onSuccess: (username: string, password: string) => void;
+  onClose: () => void;
 }
 
 export default function LoginPopup({ onSuccess, onClose }: LoginPopupProps) {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    setMessage(null);
     try {
-      // Mock API call
-      await axios.post("/api/login", { "username":username, "password":password })
-      onSuccess(username, password)
+      const response = await axios.post("/api/login", { username, password });
+      
+      // Check response messageType to determine the message
+      const successMessage = response.data.messageType === "signup" ? "Account created!" : "Login successful!";
+      
+      setMessage({ type: "success", text: successMessage });
+
+      setTimeout(() => {
+        onSuccess(username, password);
+      }, 1500); // Delay to show message before closing
     } catch (error) {
-      console.error("Login failed:", error)
-      alert("Login failed. Please try again.")
+      console.error("Login failed:", error);
+      setMessage({ type: "error", text: "Login failed. Please try again." });
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -57,6 +65,15 @@ export default function LoginPopup({ onSuccess, onClose }: LoginPopupProps) {
               required
             />
           </div>
+          {message && (
+            <div
+              className={`mb-4 rounded-lg p-3 ${
+                message.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+              }`}
+            >
+              {message.text}
+            </div>
+          )}
           <div className="flex justify-end">
             <button
               type="button"
@@ -72,6 +89,5 @@ export default function LoginPopup({ onSuccess, onClose }: LoginPopupProps) {
         </form>
       </div>
     </div>
-  )
+  );
 }
-

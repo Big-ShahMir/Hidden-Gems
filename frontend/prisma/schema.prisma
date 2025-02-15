@@ -14,13 +14,33 @@ datasource db {
 }
 
 model User {
-  password String
   username  String @unique @id
-  preferences Preferences[]
+  password String
+  preferences UserPreferences[] // Use the intermediate model
 }
 
-model Preferences{
-  id Int @id @default(autoincrement())
-  users User[]
-  perferences String
+model Preferences {
+  interests String
+  budget    Float
+  location  String
+
+  // Composite primary key on interests, budget, and location
+  @@id([interests, budget, location])
+
+  // Many-to-many relation via the intermediate table
+  users UserPreferences[] // Use the intermediate model to relate to users
+}
+
+// Intermediate model to represent the many-to-many relation between User and Preferences
+model UserPreferences {
+  userUsername String
+  preferencesInterests String
+  preferencesBudget Float
+  preferencesLocation String
+
+  // Foreign keys referencing User and Preferences
+  user User @relation(fields: [userUsername], references: [username])
+  preference Preferences @relation(fields: [preferencesInterests, preferencesBudget, preferencesLocation], references: [interests, budget, location])
+
+  @@id([userUsername, preferencesInterests, preferencesBudget, preferencesLocation]) // Composite primary key for the join table
 }

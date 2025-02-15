@@ -1,21 +1,44 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
+import axios from "axios";
+import { UserData } from "@/app/page";
+
 
 interface PreferencesPopupProps {
-  onSubmit: (pref1: string, pref2: string) => void
+  onSubmit: (interests: string, budget: number, location: string) => void
   onClose: () => void
+  userData: UserData | null // Added userData prop
 }
 
-export default function PreferencesPopup({ onSubmit, onClose }: PreferencesPopupProps) {
-  const [pref1, setPref1] = useState("")
-  const [pref2, setPref2] = useState("")
+export default function PreferencesPopup({ onSubmit, onClose, userData }: PreferencesPopupProps) {
+  const [interests, setInterests] = useState("")
+  const [budget, setBudget] = useState<number>(0)
+  const [location, setLocation] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(pref1, pref2)
+
+    try {
+      // Send preferences to the API route using Axios
+      const response = await axios.post('/api/savePreferences', {
+        username: userData?.username, // Added username to the request body
+        interests,
+        budget,
+        location,
+      })
+
+      if (response.status === 200) {
+        const data = response.data
+        onSubmit(interests, budget, location)
+        console.log('Preference saved:', data)
+      } else {
+        console.error('Failed to save preference')
+      }
+    } catch (error) {
+      console.error('Error saving preference:', error)
+    }
   }
 
   return (
@@ -24,27 +47,42 @@ export default function PreferencesPopup({ onSubmit, onClose }: PreferencesPopup
         <h2 className="mb-4 text-2xl font-bold">Set Your Preferences</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="pref1" className="mb-2 block text-sm font-bold text-gray-700">
-              Preference 1
+            <label htmlFor="interests" className="mb-2 block text-sm font-bold text-gray-700">
+              Interests
             </label>
             <input
               type="text"
-              id="pref1"
-              value={pref1}
-              onChange={(e) => setPref1(e.target.value)}
+              id="interests"
+              value={interests}
+              onChange={(e) => setInterests(e.target.value)}
               className="w-full rounded-lg border px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
+          <div className="mb-4">
+            <label htmlFor="budget" className="mb-2 block text-sm font-bold text-gray-700">
+              Budget
+            </label>
+            <input
+              type="number"
+              id="budget"
+              value={budget}
+              onChange={(e) => setBudget(Number.parseFloat(e.target.value))}
+              className="w-full rounded-lg border px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+              step="0.01"
+              min="0"
+            />
+          </div>
           <div className="mb-6">
-            <label htmlFor="pref2" className="mb-2 block text-sm font-bold text-gray-700">
-              Preference 2
+            <label htmlFor="location" className="mb-2 block text-sm font-bold text-gray-700">
+              Location
             </label>
             <input
               type="text"
-              id="pref2"
-              value={pref2}
-              onChange={(e) => setPref2(e.target.value)}
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
               className="w-full rounded-lg border px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -66,4 +104,3 @@ export default function PreferencesPopup({ onSubmit, onClose }: PreferencesPopup
     </div>
   )
 }
-
