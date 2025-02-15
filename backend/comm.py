@@ -20,7 +20,7 @@ def llm(query):
       "return_full_text": False
     }
 
-    prompt = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are a travel guide. You are provided with a diverse range of information of activities to do in a given location. Your job is to condense this information and pick events/activities for 
+    prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are a travel guide. You are provided with a diverse range of information of activities to do in a given location. Your job is to condense this information and pick events/activities for 
      a person to do based on their interests, which is also provided <|eot_id|><|start_header_id|>user<|end_header_id|> Here is the information of possible activites: ```{query}```.
       Provide precise and concise recommendations try to get between 5-10 recommendations and format your response in JSON format, having keys for activity name, description and the approximate price.<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
   
