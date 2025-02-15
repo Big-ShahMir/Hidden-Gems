@@ -1,4 +1,4 @@
-from google import get_places
+#from google import get_places
 from forum import get_reddit_posts
 from blog import scrape_blog
 
@@ -21,7 +21,7 @@ def aggregate_data(location):
     # Step 3: (Optional) For each place, attempt to scrape related travel blogs.
     # For demonstration, we’ll use a placeholder blog URL.
     blogs = []
-    placeholder_blog_url = "https://example.com/sample-travel-blog" # NEED TO EDIT
+    placeholder_blog_url = "https://hiddengemguide.com" # NEED TO EDIT
     blog_content = scrape_blog(placeholder_blog_url)
     if blog_content:
         blogs.append(blog_content)
