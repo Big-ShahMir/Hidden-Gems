@@ -1,6 +1,6 @@
-from aggregator.google import get_places
-from aggregator.forum import get_reddit_posts
-from aggregator.blog import scrape_blog
+from google import get_places
+from forum import get_reddit_posts
+from blog import scrape_blog
 
 def aggregate_data(location):
     """
@@ -13,7 +13,7 @@ def aggregate_data(location):
         dict: Aggregated data from Google Places, Reddit, and travel blogs.
     """
     # Step 1: Get nearby places
-    places = get_places(location)
+    # places = get_places(location)
     
     # Step 2: Fetch Reddit posts related to the location (or a place type)
     reddit_data = get_reddit_posts(query=location, limit=5)
@@ -28,7 +28,7 @@ def aggregate_data(location):
     
     # Aggregate all data into a single dictionary
     aggregated = {
-        'places': places,
+        # 'places': places,
         'reddit_posts': reddit_data,
         'blogs': blogs,
     }
@@ -37,6 +37,6 @@ def aggregate_data(location):
 
 if __name__ == "__main__":
     # Example coordinates for New York City
-    location = "40.7128,-74.0060"
+    #location = "40.7128,-74.0060"
     data = aggregate_data(location)
     print(data)
