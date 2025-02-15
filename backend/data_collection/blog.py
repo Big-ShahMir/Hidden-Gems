@@ -107,3 +107,36 @@ def scrape_travel_blog(blog_url):
                 blog_data['images'].append(src)
     
     return blog_data
+
+# from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
+# import time
+# import trafilatura
+
+# def extract_content_with_selenium(url):
+#     # Configure headless Chrome
+#     chrome_options = Options()
+#     chrome_options.add_argument("--headless")
+#     chrome_options.add_argument("--disable-gpu")
+    
+#     # Initialize webdriver (ensure you have the correct path for chromedriver)
+#     driver = webdriver.Chrome(options=chrome_options)
+#     driver.get(url)
+    
+#     # Wait for the page to load dynamic content
+#     time.sleep(5)  # Adjust as needed based on the site
+    
+#     page_source = driver.page_source
+#     driver.quit()
+    
+#     # Use Trafilatura to extract content from the rendered HTML
+#     extracted = trafilatura.extract(page_source, include_comments=False, include_formatting=True)
+#     return extracted
+
+# # Usage
+# # url = "https://example-travel-blog.com/sample-post"
+# # content = extract_content_with_selenium(url)
+# # if content:
+# #     print(content)
+# # else:
+# #     print("Content extraction failed.")

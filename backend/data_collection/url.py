@@ -1,43 +1,39 @@
-from duckduckgo_search import ddg
+from serpapi import GoogleSearch
 
-def get_relevant_travel_blog_urls(query, max_results=10):
+def get_relevant_travel_blog_urls(query, max_results=10, serpapi_api_key="c351dccc615b6b780739aaa82d7978967536cfa1c14cced5ac1a1d474475b87f"):
     """
-    Retrieve travel blog URLs relevant to a query using DuckDuckGo search.
-
+    Retrieve travel blog URLs relevant to a query using SerpAPI's Google Search API.
+    
     Args:
-        query (str): The search query or location, e.g. "hidden gems travel blog Paris".
+        query (str): The search query or location, e.g., "hidden gems travel blog Paris".
         max_results (int): Maximum number of results to retrieve.
-
+        serpapi_api_key (str): Your SerpAPI API key.
+    
     Returns:
         list: A list of URLs that are likely travel blogs.
     """
-    # Perform the search with the given query
-    results = ddg(query, max_results=max_results)
+    params = {
+        "engine": "google",
+        "q": query,
+        "num": max_results,
+        "api_key": serpapi_api_key
+    }
     
-    if not results:
-        return []
+    search = GoogleSearch(params)
+    results = search.get_dict()
     
-    # Filter results: for example, keep results where the title suggests it’s a blog
+    # SerpAPI returns a list of organic results in the "organic_results" field.
+    organic_results = results.get("organic_results", [])
+    
     filtered_urls = []
-    for result in results:
+    for result in organic_results:
         title = result.get("title", "").lower()
         # Use basic keywords to decide if the result is a travel blog
-        if "blog" in title or "travel" in title:
-            # DuckDuckGo's API may use 'href' or 'url' for the result URL
-            url = result.get("href") or result.get("url")
-            if url and url not in filtered_urls:
-                filtered_urls.append(url)
-    
+        # if "blog" in title: #or "travel" in title:
+        # print(result.get("link"))
+        url = result.get("link")
+        if url and url not in filtered_urls:
+                    filtered_urls.append(url)
+                    if len(filtered_urls) >= max_results:
+                        break
     return filtered_urls
-
-# if __name__ == '__main__':
-#     # Example query: Adjust it based on your needs (e.g., location, keywords)
-#     query = "hidden gems travel blog New York"
-#     urls = get_relevant_travel_blog_urls(query)
-    
-#     if urls:
-#         print("Relevant Travel Blog URLs:")
-#         for url in urls:
-#             print(url)
-#     else:
-#         print("No relevant URLs found.")

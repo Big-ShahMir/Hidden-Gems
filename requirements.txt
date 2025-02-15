@@ -5,4 +5,5 @@ unittest2==1.1.0      # For testing (alternative to built-in unittest with more 
 bs4 
 requests
 urllib
-duckduckgo_search
+selenium
+trafilatura
