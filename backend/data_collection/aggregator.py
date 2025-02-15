@@ -43,18 +43,18 @@ def aggregate_data(location):
     
     return aggregated
 
-if __name__ == "__main__":
-    # Example coordinates for New York City
-    #location = "40.7128,-74.0060"
-    location = "Not so popular activities to do in Tokyo"
-    data = aggregate_data(location)
+# if __name__ == "__main__":
+#     # Example coordinates for New York City
+#     #location = "40.7128,-74.0060"
+#     location = "Not so popular activities to do in Tokyo"
+#     data = aggregate_data(location)
 
-    for blog in data["blogs"]:
-        print(blog["title"])
-        print(blog["content"])
-        print("\n")
-    for reddit in data["reddit_posts"]:
-        print(reddit["title"])
-        print(reddit["selftext"])
+#     for blog in data["blogs"]:
+#         print(blog["title"])
+#         print(blog["content"])
+#         print("\n")
+#     for reddit in data["reddit_posts"]:
+#         print(reddit["title"])
+#         print(reddit["selftext"])
 
     # print(data["reddit_posts"]["content"])
