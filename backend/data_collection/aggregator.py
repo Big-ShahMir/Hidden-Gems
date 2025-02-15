@@ -1,4 +1,3 @@
-#from google import get_places
 from forum import get_reddit_posts
 from blog import scrape_travel_blog
 from url import get_relevant_travel_blog_urls
@@ -47,13 +46,15 @@ def aggregate_data(location):
 if __name__ == "__main__":
     # Example coordinates for New York City
     #location = "40.7128,-74.0060"
-    location = "Things to do in Tokyo"
+    location = "Not so popular activities to do in Tokyo"
     data = aggregate_data(location)
-    print(data["blogs"][0]['content'])
-    # print(data["reddit_posts"][1]["selftext"])
-    # print("------")
-    # print(data["reddit_posts"][2]["selftext"])
-    # print("------")
-    # print(data["reddit_posts"][3]["selftext"])
 
-    # print(data["blogs"])
+    for blog in data["blogs"]:
+        print(blog["title"])
+        print(blog["content"])
+        print("\n")
+    for reddit in data["reddit_posts"]:
+        print(reddit["title"])
+        print(reddit["selftext"])
+
+    # print(data["reddit_posts"]["content"])
