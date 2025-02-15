@@ -38,5 +38,6 @@ def aggregate_data(location):
 if __name__ == "__main__":
     # Example coordinates for New York City
     #location = "40.7128,-74.0060"
+    location = "Tokyo"
     data = aggregate_data(location)
     print(data)
