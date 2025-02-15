@@ -20,7 +20,6 @@ def get_reddit_posts(query, limit=5):
         data = response.json()
         posts = data.get('data', {}).get('children', [])
         
-        # Extract only the essential content and basic info
         extracted_posts = []
         for post in posts:
             post_data = post.get('data', {})

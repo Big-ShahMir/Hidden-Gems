@@ -22,7 +22,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Define the output model(s)
 class ProcessingInput(BaseModel):
     interest: str
     budget: float
@@ -41,8 +40,7 @@ async def root():
 async def process_data(input_data: ProcessingInput):
     try:
         print("works")
-        # This is where your custom processing code would go
-        # For now, we'll use a placeholder implementation
+        
         processed_data = custom_process_data(input_data.interest, input_data.budget, input_data.loc)
         
         return ProcessedResult(

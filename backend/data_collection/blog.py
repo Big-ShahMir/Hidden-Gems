@@ -27,7 +27,6 @@ def scrape_travel_blog(blog_url):
     soup = BeautifulSoup(response.content, 'html.parser')
     domain = urlparse(blog_url).netloc
     
-    # Initialize result dictionary
     blog_data = {
         'url': blog_url,
         'domain': domain,
@@ -39,7 +38,6 @@ def scrape_travel_blog(blog_url):
         'images': []
     }
     
-    # Extract title (try different common selectors)
     title_selectors = ['h1.entry-title', 'h1.post-title', 'h1.article-title', 'h1']
     for selector in title_selectors:
         title = soup.select_one(selector)
@@ -47,7 +45,6 @@ def scrape_travel_blog(blog_url):
             blog_data['title'] = title.get_text(strip=True)
             break
     
-    # Extract content (try different common content containers)
     content_selectors = [
         'div.post-content', 'div.entry-content', 'article.post', 
         'div.blog-post-content', 'div.article-content'

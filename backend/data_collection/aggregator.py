@@ -2,29 +2,30 @@ from forum import get_reddit_posts
 from blog import scrape_travel_blog
 from url import get_relevant_travel_blog_urls
 
-def aggregate_data(location):
+def aggregate_data(location, budget, interest: list[str]):
     """
     Aggregates travel data from multiple sources.
 
     Args:
-        location (str): Coordinates in "lat,lng" format.
+        location (str): str of the location.
 
     Returns:
         dict: Aggregated data from Google Places, Reddit, and travel blogs.
     """
-    # Step 1: Get nearby places
     # places = get_places(location)
     
-    # Step 2: Fetch Reddit posts related to the location (or a place type)
-    reddit_data = get_reddit_posts(query=location, limit=5)
+    query1 = f"Unique and affordable activities in {location} under ${budget} if you like {interest}"
     
-    # Step 3: (Optional) For each place, attempt to scrape related travel blogs.
-    # For demonstration, we’ll use a placeholder blog URL.
+    # reddit_data = get_reddit_posts(query=location, limit=5)
+    reddit_data = get_reddit_posts(query=query1, limit=5)
+    
     blogs = []
     # placeholder_blog_url = "https://travelwithruba.com/?utm_source=chatgpt.com" 
     # blog_content = scrape_travel_blog(placeholder_blog_url)
-    urls = get_relevant_travel_blog_urls(location)
+    # urls = get_relevant_travel_blog_urls(location)
+    urls = get_relevant_travel_blog_urls(query1)
     
+
     # blog_content = scrape_travel_blog(urls[0])
     # if blog_content:
     #     blogs.append(blog_content)
@@ -34,7 +35,6 @@ def aggregate_data(location):
         if blog_content:
             blogs.append(blog_content)
 
-    # Aggregate all data into a single dictionary
     aggregated = {
         # 'places': places,
         'reddit_posts': reddit_data,
@@ -46,8 +46,8 @@ def aggregate_data(location):
 # if __name__ == "__main__":
 #     # Example coordinates for New York City
 #     #location = "40.7128,-74.0060"
-#     location = "Not so popular activities to do in Tokyo"
-#     data = aggregate_data(location)
+#     location = "New York City"
+#     data = aggregate_data(location, 100, ["adventure"])
 
 #     for blog in data["blogs"]:
 #         print(blog["title"])

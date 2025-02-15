@@ -22,14 +22,12 @@ def get_relevant_travel_blog_urls(query, max_results=10, serpapi_api_key="c351dc
     search = GoogleSearch(params)
     results = search.get_dict()
     
-    # SerpAPI returns a list of organic results in the "organic_results" field.
     organic_results = results.get("organic_results", [])
     
     filtered_urls = []
     for result in organic_results:
         title = result.get("title", "").lower()
-        # Use basic keywords to decide if the result is a travel blog
-        # if "blog" in title: #or "travel" in title:
+    
         # print(result.get("link"))
         url = result.get("link")
         if url and url not in filtered_urls:
