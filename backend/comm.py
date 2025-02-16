@@ -1,3 +1,6 @@
+import torch
+from transformers import pipeline
+from transformers import AutoTokenizer
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
@@ -6,38 +9,74 @@ import uvicorn
 import huggingface_hub
 import requests
 from data_collection.aggregator import aggregate_data
+import json
+import re
 
 # AI STUFF
-ai_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
-token = "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"
+MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
+HF_TOKEN = "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"
+tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, token=HF_TOKEN)
 
+budget = 0
+location = ""
+interest = ""
+
+
+MAX_INPUT_TOKENS = 6000  # Keep a safe limit to avoid hitting 8192
+# MAX_NEW_TOKENS = 500  # Reduce output size to avoid exceeding total limit
+
+# Hugging Face Inference API call function
 def llm(query): 
     parameters = {
-      "max_new_tokens": 1000,
-      "temperature": 0.09,
-      "top_k": 50,
-      "top_p": 0.95,
-      "return_full_text": False
+        "max_new_tokens": 1000,
+        "temperature": 0.09,
+        "top_k": 50,
+        "top_p": 0.95,
+        "return_full_text": False
     }
 
-    prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are a travel guide. You are provided with a diverse range of information of activities to do in a given location. Your job is to condense this information and pick events/activities for 
-     a person to do based on their interests, which is also provided <|eot_id|><|start_header_id|>user<|end_header_id|> Here is the information of possible activites: ```{query}```.
-      Provide precise and concise recommendations try to get between 5-10 recommendations and format your response in JSON format, having keys for activity name, description and the approximate price.<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
-  
+    print("works -1")
+
+    if isinstance(query, dict):
+        query = json.dumps(query, indent=2)
+
+    tokenized = tokenizer(query, truncation=True, max_length=6000, return_tensors="pt")
+    trimmed_query = tokenizer.decode(tokenized["input_ids"][0], skip_special_tokens=True)
+
+
+    print("works -2")
+
+
+    prompt = f"""
+    You are a travel guide. You are provided with a diverse range of information of activities to do in a given location.
+    Your job is to condense this information and pick events/activities for a person to do based on their interests, which is also provided.
+    Here is the information of possible activities: ```{trimmed_query}```. User have the preferences of interest:{interest} at location:{location} and a budget of ${budget}. 
+    Provide precise and concise recommendations (between 5-10) and format your response in JSON format with keys: "activity_name", "description", and "approximate_price".
+    """
+
     headers = {
-      'Authorization': f'Bearer {token}',
-      'Content-Type': 'application/json'
-  }
+        'Authorization': f'Bearer {HF_TOKEN}',
+        'Content-Type': 'application/json'
+    }
     
     payload = {
-      "inputs": prompt,
-      "parameters": parameters
-  }
-  
-    response = requests.post(ai_url, headers=headers, json=payload)
-    response_text = response.json()[0]['generated_text'].strip()
+        "inputs": prompt,
+        "parameters": parameters
+    }
+    
+    print("works 3")
+    response = requests.post(f"https://api-inference.huggingface.co/models/{MODEL_ID}", headers=headers, json=payload)
+    print("works 4")
+    print(response)
+    response_json = response.json()
+    print("works 5")
+    print("Hugging Face API Response:", response_json)
 
-    return response_text
+    if isinstance(response_json, list) and len(response_json) > 0 and isinstance(response_json[0], dict) and 'generated_text' in response_json[0]:
+        return response_json[0]['generated_text'].strip()
+    else:
+        raise Exception("Invalid response from AI model")
+
 
 
 # API STUFF
@@ -64,7 +103,7 @@ class ProcessingInput(BaseModel):
     loc: str
     
 class ProcessedResult(BaseModel):
-    descs: list[list[str, float, str]]
+    descs: List[Dict[str, str]]  # Now correctly represents JSON structure
 
 # Initialize the app
 @app.get("/")
@@ -75,8 +114,14 @@ async def root():
 @app.post("/process", response_model=ProcessedResult)
 async def process_data(input_data: ProcessingInput):
     try:
+        global budget, location, interest
         print("works")
+        print(input_data.interest, input_data.budget, input_data.loc)
         
+        budget = input_data.budget
+        location = input_data.loc
+        interest = input_data.interest
+
         processed_data = custom_process_data(input_data.interest, input_data.budget, input_data.loc)
         
         return ProcessedResult(
@@ -89,11 +134,33 @@ async def process_data(input_data: ProcessingInput):
 
 def custom_process_data(intrst: str, budg: float, loc: str ) :
     data = aggregate_data(loc, budg, intrst)
-    print("works 2")
-    print(llm(data))
-    print("works 3")
-    process_data = []
-    return process_data
+    llm_response = llm(data)
+    print("Raw LLM Response:", llm_response)
+
+    try:
+        # Extract JSON using regex (if LLM added extra text)
+        json_match = re.search(r"\[.*\]", llm_response, re.DOTALL)
+
+        if json_match:
+            extracted_json = json_match.group(0)
+            parsed_response = json.loads(extracted_json)  # Convert to Python list
+
+            # Ensure valid structure
+            valid_activities = [
+                item for item in parsed_response
+                if isinstance(item, dict) and 
+                   all(key in item for key in ["activity_name", "description", "approximate_price"])
+            ]
+        else:
+            print("No valid JSON found in LLM response")
+            valid_activities = []
+
+    except json.JSONDecodeError:
+        print("Error: LLM response is not valid JSON")
+        valid_activities = []
+
+    print("Filtered Activities:", valid_activities)
+    return valid_activities
 
 
 if __name__ == "__main__":

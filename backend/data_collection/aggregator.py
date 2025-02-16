@@ -35,6 +35,8 @@ def aggregate_data(location, budget, interest: str):
         if blog_content:
             blogs.append(blog_content)
 
+    print(reddit_data, blogs)
+
     aggregated = {
         # 'places': places,
         'reddit_posts': reddit_data,
