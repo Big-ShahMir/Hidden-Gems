@@ -2,11 +2,12 @@
 
 import type React from "react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import axios from "axios";
 import { UserData } from "@/app/page";
 
 
-const fastApiURL = "http://127.0.0.1:8000"
+export const fastApiURL = "http://127.0.0.1:8000"
 
 interface PreferencesPopupProps {
   onSubmit: (interests: string, budget: number, location: string) => void
@@ -18,6 +19,8 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
   const [interests, setInterests] = useState("")
   const [budget, setBudget] = useState<number>(0)
   const [location, setLocation] = useState("")
+  const router = useRouter()
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,6 +49,8 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
       })
 
     console.log(descriptions.data)
+
+    router.push(`/activities?data=${encodeURIComponent(JSON.stringify(descriptions.data))}`)
 
 
     } catch (error) {

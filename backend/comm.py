@@ -11,10 +11,19 @@ import requests
 from data_collection.aggregator import aggregate_data
 import json
 import re
+import requests
+import os
+from dotenv import load_dotenv
+from urllib.parse import quote  
+import random
+from typing import Union
+
+
+load_dotenv() 
 
 # AI STUFF
 MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
-HF_TOKEN = "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"
+HF_TOKEN = os.getenv("HF_TOKEN") 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, token=HF_TOKEN)
 
 budget = 0
@@ -23,7 +32,6 @@ interest = ""
 
 
 MAX_INPUT_TOKENS = 6000  # Keep a safe limit to avoid hitting 8192
-# MAX_NEW_TOKENS = 500  # Reduce output size to avoid exceeding total limit
 
 # Hugging Face Inference API call function
 def llm(query): 
@@ -35,16 +43,11 @@ def llm(query):
         "return_full_text": False
     }
 
-    print("works -1")
-
     if isinstance(query, dict):
         query = json.dumps(query, indent=2)
 
     tokenized = tokenizer(query, truncation=True, max_length=6000, return_tensors="pt")
     trimmed_query = tokenizer.decode(tokenized["input_ids"][0], skip_special_tokens=True)
-
-
-    print("works -2")
 
 
     prompt = f"""
@@ -103,7 +106,7 @@ class ProcessingInput(BaseModel):
     loc: str
     
 class ProcessedResult(BaseModel):
-    descs: List[Dict[str, str]]  # Now correctly represents JSON structure
+    descs: List[Dict[str, Union[str,int]]]  # Now correctly represents JSON structure
 
 # Initialize the app
 @app.get("/")
@@ -162,6 +165,31 @@ def custom_process_data(intrst: str, budg: float, loc: str ) :
     print("Filtered Activities:", valid_activities)
     return valid_activities
 
+PIX_API_KEY = os.getenv("PIX_API_KEY")
+
+class ImagePrompt(BaseModel):
+    prompt: str
+
+@app.post("/image")
+def image_endpoint(input: ImagePrompt):
+
+    print("Prompt:", input.prompt)
+
+    response = requests.get(f"https://pixabay.com/api/?key={PIX_API_KEY}&q={quote(input.prompt[:100])}&image_type=photo")
+
+    print("Pixabay API Response:", response)
+
+    if response.status_code == 200:
+        data = response.json()
+        if "hits" in data and len(data["hits"]) > 0:
+            random_index = random.randint(0, len(data["hits"]) - 1)
+
+            image_url = data["hits"][random_index].get("largeImageURL") or data["hits"][random_index].get("webformatURL")
+            return {"imageURL": image_url}  # Return only the first image URL
+        else:
+            return {"error": "No images found."}
+    else:
+        return {"error": "Failed to fetch images."}
 
 if __name__ == "__main__":
     uvicorn.run("comm:app", host="127.0.0.1", port=8000, reload=True)
