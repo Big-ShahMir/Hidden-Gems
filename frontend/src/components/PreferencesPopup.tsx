@@ -48,13 +48,13 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
         loc: location,
       })
 
+    console.log(descriptions.data)
+
     if (!descriptions.data) { 
       throw new Error('No data returned from the API')
     }
 
-    console.log(descriptions.data)
-
-    router.push(`/activities?data=${encodeURIComponent(JSON.stringify(descriptions.data))}&user_name=${userData?.username}`)
+    router.push(`/activities?data=${encodeURIComponent(JSON.stringify(descriptions.data))}&user_name=${userData?.username}&interests=${interests}&budget=${budget}&location=${location}`)
 
 
     } catch (error) {

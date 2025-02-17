@@ -21,11 +21,17 @@ export default function ActivitiesPage() {
   const [error, setError] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const router = useRouter()
+  let [userName, setUserName] = useState("")
+  let [interests, setInterests] = useState("")
+  let [budget, setBudget] = useState("")
+  let [location, setLocation] = useState("")
   
   useEffect(() => {
 
-    const user_name = searchParams.get("user_name")
-
+    setUserName(searchParams.get("user_name")??"")
+    setInterests(searchParams.get("interests")??"")
+    setBudget(searchParams.get("budget")??"")
+    setLocation(searchParams.get("location")??"")
 
     const data = searchParams.get("data")
     if (data) {
@@ -36,17 +42,19 @@ export default function ActivitiesPage() {
         } else {
           setError("No activities found. Please try different preferences.")
           setTimeout(() => {
-            router.push(`/?preferences=True&user_name=${user_name}`)
+            router.push(`/?preferences=True&user_name=${userName}`)
           }, 3000)
         }
       } catch (error) {
-        console.error("Error parsing data:", error)
-        setError("Error loading activities. Please try again.")
-        setTimeout(() => {
-            router.push(`/?preferences=True&user_name=${user_name}`)
-          }, 3000)
+        console.error("Error:", error)
 
+        // Show an error message to the user (you might want to set this in state and display it in your component)
+        alert("An error occurred. Redirecting to preferences page...")
+  
+        // Redirect immediately instead of using setTimeout
+        router.push(`/?preferences=True&user_name=${userName}`)
       }
+      
     } else {
       setError("No data provided. Please set your preferences first.")
     }
@@ -80,16 +88,33 @@ export default function ActivitiesPage() {
 
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-b from-blue-200 to-blue-400">
-        <div className="flex justify-center items-center p-2">
-        <button
-          onClick={handleChangePreferences}
-          className="bg-white text-blue-800 px-6 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors duration-200 shadow-md"
-        >
-          Change Preferences
-        </button>
-        <button onClick={() => router.push("/")} className="bg-white text-blue-800 px-6 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors duration-200 shadow-md ml-4">
+        <div className="flex justify-between items-center p-4 bg-white bg-opacity-20 backdrop-blur-md">
+        <div className="text-blue-800">
+          <h2 className="text-xl font-bold">{userName}</h2>
+          <p className="text-sm">
+            <span className="font-semibold">Interests:</span> {interests}
+          </p>
+          <p className="text-sm">
+            <span className="font-semibold">Location:</span> {location}
+          </p>
+          <p className="text-sm">
+            <span className="font-semibold">Budget:</span> {budget}
+          </p>
+        </div>
+        <div>
+          <button
+            onClick={handleChangePreferences}
+            className="bg-white text-blue-800 px-4 py-2 rounded-lg font-bold hover:bg-blue-100 transition-colors duration-200 shadow-md mr-2"
+          >
+            Change Preferences
+          </button>
+          <button
+            onClick={() => router.push("/")}
+            className="bg-white text-blue-800 px-4 py-2 rounded-lg font-bold hover:bg-blue-100 transition-colors duration-200 shadow-md"
+          >
             Logout
-        </button>
+          </button>
+        </div>
       </div>
       {/* <div className="fixed top-0 left-0 right-0 bg-gradient-to-b from-blue-200 to-transparent pt-4 pb-8 z-10">
         <h1 className="text-4xl font-bold text-white text-center">Suggested Activities</h1>
@@ -131,7 +156,7 @@ export default function ActivitiesPage() {
           )
         })}
       </div> */}
-       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-full overflow-y-auto p-2 pt-0">
+       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-full overflow-y-auto p-3 z-25">
         {activities.map((activity, index) => (
           <div key={index} className="flex justify-center">
             <Polaroid
