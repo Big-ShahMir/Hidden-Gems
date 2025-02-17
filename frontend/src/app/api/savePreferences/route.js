@@ -29,15 +29,29 @@ export async function POST(request) {
           data: { interests, budget, location },
         });
 
-    // Create the UserPreferences relation
-    await prisma.userPreferences.create({
-      data: {
-        userUsername: user.username,
-        preferencesInterests: preference.interests,
-        preferencesBudget: preference.budget,
-        preferencesLocation: preference.location,
-      },
-    });
+        // Check if the UserPreferences relation already exists (if it exists, skip creating it)
+        const existingUserPreference = await prisma.userPreferences.findUnique({
+          where: {
+            userUsername_preferencesInterests_preferencesBudget_preferencesLocation: {
+              userUsername: user.username,
+              preferencesInterests: preference.interests,
+              preferencesBudget: preference.budget,
+              preferencesLocation: preference.location,
+            },
+          },
+        });
+    
+        // If it doesn't exist, create the UserPreferences relation
+        if (!existingUserPreference) {
+          await prisma.userPreferences.create({
+            data: {
+              userUsername: user.username,
+              preferencesInterests: preference.interests,
+              preferencesBudget: preference.budget,
+              preferencesLocation: preference.location,
+            },
+          });
+        }
 
     // Return the preference details
     return NextResponse.json(preference);

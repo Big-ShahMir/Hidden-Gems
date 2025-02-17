@@ -14,25 +14,28 @@ interface PolaroidProps {
   price: string
 }
 
+let done = false
+
 export default function Polaroid({ title, description, price }: PolaroidProps) {
   const [expanded, setExpanded] = useState(false)
   const [imageUrl, setImageUrl] = useState("")
-
-  useEffect(() => {
-    generateImage()
-  }, [])
 
   const generateImage = async () => {
     try {
       const response = await axios.post(`${fastApiURL}/image`, {prompt: title})
       if (response.status === 200 && response.data.imageURL) {
         setImageUrl(response.data.imageURL)
+        done = true
       } else {
         console.error("Image URL not found in response.")
       }
     } catch (error) {
       console.error("Error generating image:", error)
     }
+  }
+
+  if (!done) {
+    generateImage()
   }
 
   const handleClick = (e: React.MouseEvent) => {
@@ -42,7 +45,7 @@ export default function Polaroid({ title, description, price }: PolaroidProps) {
 
   return (
     <>
-      <div className="cursor-pointer transition-all duration-300" onClick={handleClick}>
+      <div className="cursor-pointer transition-all duration-300 text-blue-800" onClick={handleClick}>
         <div
           className={`bg-white p-4 shadow-lg w-64 transform transition-all duration-300 ${
             expanded ? "scale-0 opacity-0" : "scale-100 opacity-100 hover:rotate-0 hover:scale-105"
@@ -66,7 +69,7 @@ export default function Polaroid({ title, description, price }: PolaroidProps) {
           onClick={handleClick}
         >
           <div
-            className="bg-white rounded-xl p-8 m-4 max-w-4xl w-full max-h-[90vh] overflow-auto"
+            className="bg-white rounded-xl p-8 m-4 max-w-4xl w-full max-h-[90vh] overflow-auto text-blue-800"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative h-[50vh] mb-6">

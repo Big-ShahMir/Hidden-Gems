@@ -48,13 +48,18 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
         loc: location,
       })
 
+      
+
     console.log(descriptions.data)
 
-    router.push(`/activities?data=${encodeURIComponent(JSON.stringify(descriptions.data))}`)
+    router.push(`/activities?data=${encodeURIComponent(JSON.stringify(descriptions.data))}&user_name=${userData?.username}`)
 
 
     } catch (error) {
       console.error('Error saving preference:', error)
+          setTimeout(() => {
+            router.push(`/?preferences=True&user_name=${userData?.username}`)
+          }, 3000)
     }
 
 

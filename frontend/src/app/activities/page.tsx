@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Polaroid from "@/components/Polaroid"
+import { useRouter } from "next/navigation"
 
 interface Activity {
   activity_name: string
@@ -19,8 +20,13 @@ export default function ActivitiesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const searchParams = useSearchParams()
-
+  const router = useRouter()
+  
   useEffect(() => {
+
+    const user_name = searchParams.get("user_name")
+
+
     const data = searchParams.get("data")
     if (data) {
       try {
@@ -29,10 +35,17 @@ export default function ActivitiesPage() {
           setActivities(parsedData.descs)
         } else {
           setError("No activities found. Please try different preferences.")
+          setTimeout(() => {
+            router.push(`/?preferences=True&user_name=${user_name}`)
+          }, 3000)
         }
       } catch (error) {
         console.error("Error parsing data:", error)
         setError("Error loading activities. Please try again.")
+        setTimeout(() => {
+            router.push(`/?preferences=True&user_name=${user_name}`)
+          }, 3000)
+
       }
     } else {
       setError("No data provided. Please set your preferences first.")
