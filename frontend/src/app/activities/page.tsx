@@ -87,6 +87,9 @@ export default function ActivitiesPage() {
         >
           Change Preferences
         </button>
+        <button onClick={() => router.push("/")} className="bg-white text-blue-800 px-6 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors duration-200 shadow-md ml-4">
+            Logout
+        </button>
       </div>
       {/* <div className="fixed top-0 left-0 right-0 bg-gradient-to-b from-blue-200 to-transparent pt-4 pb-8 z-10">
         <h1 className="text-4xl font-bold text-white text-center">Suggested Activities</h1>
