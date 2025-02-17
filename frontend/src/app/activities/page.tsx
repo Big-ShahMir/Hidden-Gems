@@ -69,8 +69,25 @@ export default function ActivitiesPage() {
     )
   }
 
+  const handleChangePreferences = () => {
+    const user_name = searchParams.get("user_name")
+    if (user_name) {
+      router.push(`/?preferences=True&user_name=${encodeURIComponent(user_name)}`)
+    } else {
+      router.push("/")
+    }
+  }
+
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-b from-blue-200 to-blue-400">
+        <div className="flex justify-center items-center p-2">
+        <button
+          onClick={handleChangePreferences}
+          className="bg-white text-blue-800 px-6 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors duration-200 shadow-md"
+        >
+          Change Preferences
+        </button>
+      </div>
       {/* <div className="fixed top-0 left-0 right-0 bg-gradient-to-b from-blue-200 to-transparent pt-4 pb-8 z-10">
         <h1 className="text-4xl font-bold text-white text-center">Suggested Activities</h1>
       </div> */}
@@ -111,7 +128,7 @@ export default function ActivitiesPage() {
           )
         })}
       </div> */}
-       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-full overflow-auto p-4">
+       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-full overflow-y-auto p-2 pt-0">
         {activities.map((activity, index) => (
           <div key={index} className="flex justify-center">
             <Polaroid
@@ -122,6 +139,7 @@ export default function ActivitiesPage() {
           </div>
         ))}
       </div>
+      
     </div>
   )
 }

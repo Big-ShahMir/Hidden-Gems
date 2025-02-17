@@ -48,7 +48,9 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
         loc: location,
       })
 
-      
+    if (!descriptions.data) { 
+      throw new Error('No data returned from the API')
+    }
 
     console.log(descriptions.data)
 

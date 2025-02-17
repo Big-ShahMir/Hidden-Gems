@@ -34,9 +34,9 @@ export default function Polaroid({ title, description, price }: PolaroidProps) {
     }
   }
 
-  if (!done) {
+    useEffect(() => {
     generateImage()
-  }
+    , []})
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
