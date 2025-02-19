@@ -17,6 +17,9 @@ interface Preferences {
 }
 
 export default function Home() {
+
+  localStorage.clear()
+
   const [showLogin, setShowLogin] = useState(false)
   const [showPreferences, setShowPreferences] = useState(false)
   const [userData, setUserData] = useState<UserData | null>(null)
@@ -26,18 +29,26 @@ export default function Home() {
   const handleLoginSuccess = (username: string, password: string) => {
     setUserData({ username, password })
     setShowLogin(false)
+    localStorage.setItem("username", username)
     setShowPreferences(true)
   }
 
   useEffect(() => {
-      const data = searchParams.get("preferences")
-      if (data === "True"){
-        const username = searchParams.get("user_name")
-        setUserData({username: username || "", password: ""})
+    const storedUsername = localStorage.getItem("username")
+    if (storedUsername) {
+      setUserData({ username: storedUsername, password: "" })
+    }
+
+    const data = searchParams.get("preferences")
+    if (data === "True") {
+      const username = searchParams.get("user_name") || storedUsername
+      if (username) {
+        setUserData({ username, password: "" })
+        localStorage.setItem("username", username)
         setShowPreferences(true)
       }
-    }, [searchParams])
-  
+    }
+  }, [searchParams])
 
   const handlePreferencesSubmit = (interests: string, budget: number, location: string) => {
     setPreferences({ interests, budget, location })
@@ -64,7 +75,7 @@ export default function Home() {
 
       {showLogin && <LoginPopup onSuccess={handleLoginSuccess} onClose={() => setShowLogin(false)} />}
       {showPreferences && (
-        <PreferencesPopup onSubmit={handlePreferencesSubmit} onClose={() => setShowPreferences(false)} userData={userData} />
+        <PreferencesPopup onSubmit={handlePreferencesSubmit} onClose={() => setShowPreferences(false)} userData={userData} setShowPreferences={setShowPreferences} />
       )}
 
       {userData && preferences && (

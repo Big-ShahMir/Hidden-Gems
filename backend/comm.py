@@ -46,7 +46,7 @@ def llm(query):
     if isinstance(query, dict):
         query = json.dumps(query, indent=2)
 
-    tokenized = tokenizer(query, truncation=True, max_length=6000, return_tensors="pt")
+    tokenized = tokenizer(query, truncation=True, max_length=MAX_INPUT_TOKENS, return_tensors="pt")
     trimmed_query = tokenizer.decode(tokenized["input_ids"][0], skip_special_tokens=True)
 
 
@@ -54,7 +54,7 @@ def llm(query):
     You are a travel guide. You are provided with a diverse range of information of activities to do in a given location.
     Your job is to condense this information and pick events/activities for a person to do based on their interests, which is also provided.
     Here is the information of possible activities: ```{trimmed_query}```. User have the preferences of interest:{interest} at location:{location} and a budget of ${budget}. 
-    Provide precise and concise recommendations (between 5-10) and format your response in JSON format with keys: "activity_name", "description", and "approximate_price".
+    Provide precise and concise recommendations (between 5-10) and format your response in only one array which contains JSON elements for each activity formatted with keys: "activity_name", "description", and "approximate_price".
     """
 
     headers = {

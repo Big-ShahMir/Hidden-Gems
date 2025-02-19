@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios";
 import { UserData } from "@/app/page";
@@ -13,13 +13,27 @@ interface PreferencesPopupProps {
   onSubmit: (interests: string, budget: number, location: string) => void
   onClose: () => void
   userData: UserData | null // Added userData prop
+  setShowPreferences: (show: boolean) => void
 }
 
-export default function PreferencesPopup({ onSubmit, onClose, userData }: PreferencesPopupProps) {
+let username = ""
+
+export default function PreferencesPopup({ onSubmit, onClose, userData, setShowPreferences }: PreferencesPopupProps) {
   const [interests, setInterests] = useState("")
   const [budget, setBudget] = useState<number>(0)
   const [location, setLocation] = useState("")
   const router = useRouter()
+
+  useEffect(() => {
+    if (userData) {
+      username = userData.username
+    } else {
+      const storedUsername = localStorage.getItem("username")
+      if (storedUsername) {
+        username = storedUsername
+      }
+    }
+  }, [userData])
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +42,7 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
     try {
       // Send preferences to the API route using Axios
       const response = await axios.post('/api/savePreferences', {
-        username: userData?.username, // Added username to the request body
+        username: userData? userData.username : username, // Added username to the request body
         interests,
         budget,
         location,
@@ -59,9 +73,10 @@ export default function PreferencesPopup({ onSubmit, onClose, userData }: Prefer
 
     } catch (error) {
       console.error('Error saving preference:', error)
-          setTimeout(() => {
-            router.push(`/?preferences=True&user_name=${userData?.username}`)
-          }, 3000)
+            alert('An error occurred. Try again.')
+            // router.push(`/?preferences=True&user_name=${userData?.username}`)
+            setShowPreferences(true)
+          
     }
 
 
