@@ -18,8 +18,9 @@ interface Preferences {
 
 export default function Home() {
 
+  if (typeof window !== "undefined") {
   localStorage.clear()
-
+  }
   const [showLogin, setShowLogin] = useState(false)
   const [showPreferences, setShowPreferences] = useState(false)
   const [userData, setUserData] = useState<UserData | null>(null)
@@ -29,11 +30,14 @@ export default function Home() {
   const handleLoginSuccess = (username: string, password: string) => {
     setUserData({ username, password })
     setShowLogin(false)
+    if (typeof window !== "undefined") {
     localStorage.setItem("username", username)
     setShowPreferences(true)
+    }
   }
 
   useEffect(() => {
+    if (typeof window === "undefined") return
     const storedUsername = localStorage.getItem("username")
     if (storedUsername) {
       setUserData({ username: storedUsername, password: "" })
@@ -42,7 +46,7 @@ export default function Home() {
     const data = searchParams.get("preferences")
     if (data === "True") {
       const username = searchParams.get("user_name") || storedUsername
-      if (username) {
+      if (username && typeof window !== "undefined") {
         setUserData({ username, password: "" })
         localStorage.setItem("username", username)
         setShowPreferences(true)

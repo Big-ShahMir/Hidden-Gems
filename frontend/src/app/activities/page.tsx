@@ -36,11 +36,15 @@ function ActivitiesPage() {
   let [location, setLocation] = useState("")
   
   useEffect(() => {
+
+    if (typeof window !== "undefined"){    
     const storedUsername = localStorage.getItem("username")
+    
     setUserName(searchParams.get("user_name") || storedUsername || "")
     setInterests(searchParams.get("interests")??"")
     setBudget(searchParams.get("budget")??"")
     setLocation(searchParams.get("location")??"")
+    }
 
     const data = searchParams.get("data")
     if (data) {
@@ -119,7 +123,9 @@ function ActivitiesPage() {
           </button>
           <button
             onClick={() => {
+              if (typeof window !== "undefined") {
               localStorage.removeItem("username")
+              }
               router.push("/")}}
             className="bg-white text-blue-800 px-4 py-2 rounded-lg font-bold hover:bg-blue-100 transition-colors duration-200 shadow-md"
           >

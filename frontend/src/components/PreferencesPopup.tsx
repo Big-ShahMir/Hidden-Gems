@@ -28,10 +28,13 @@ export default function PreferencesPopup({ onSubmit, onClose, userData, setShowP
     if (userData) {
       username = userData.username
     } else {
+      if (typeof window !== "undefined") {
       const storedUsername = localStorage.getItem("username")
+      
       if (storedUsername) {
         username = storedUsername
       }
+    }
     }
   }, [userData])
 
