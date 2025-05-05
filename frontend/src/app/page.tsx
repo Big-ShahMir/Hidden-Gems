@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import LoginPopup from "@/components/LoginPopup"
 import { useSearchParams } from "next/navigation"
 import PreferencesPopup from "@/components/PreferencesPopup"
@@ -17,6 +17,15 @@ interface Preferences {
 }
 
 export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Page />
+    </Suspense>
+  )
+}
+
+
+function Page(){
 
   if (typeof window !== "undefined") {
   localStorage.clear()
