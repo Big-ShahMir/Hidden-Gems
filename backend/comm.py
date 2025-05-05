@@ -11,13 +11,13 @@ import json
 import re
 import requests
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from urllib.parse import quote  
 import random
 from typing import Union
 
 
-load_dotenv() 
+# load_dotenv() 
 
 # AI STUFF
 MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
