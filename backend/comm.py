@@ -1,4 +1,3 @@
-import torch
 from transformers import pipeline
 from transformers import AutoTokenizer
 from fastapi import FastAPI, HTTPException
@@ -6,7 +5,6 @@ from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import huggingface_hub
 import requests
 from data_collection.aggregator import aggregate_data
 import json
